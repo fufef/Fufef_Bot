@@ -4,7 +4,6 @@ import java.util
 
 
 class httpRequest {
-  private var headers = null
 
   @throws[IOException]
   def request(url: String): String = {
