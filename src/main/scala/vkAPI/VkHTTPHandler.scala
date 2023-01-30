@@ -1,6 +1,6 @@
 package vkAPI
 
-class vkHTTPHandler {
+class VkHTTPHandler {
 
   def createRequest(method: String, params: Map[String, String]): String = {
     val stringParams = params.toArray.map { case (key, value) => key + "=" + value }.mkString(sep = "&")

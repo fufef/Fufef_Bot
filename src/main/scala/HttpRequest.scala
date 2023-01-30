@@ -3,7 +3,7 @@ import java.net.{HttpURLConnection, URL}
 import java.util
 
 
-class httpRequest {
+class HttpRequest {
 
   @throws[IOException]
   def request(url: String): String = {
