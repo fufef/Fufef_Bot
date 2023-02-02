@@ -2,31 +2,49 @@ import vkAPI.*
 import botLogic.*
 
 import java.net.URLEncoder
+import scala.annotation.tailrec
 
 
 object Main extends App {
-  val response = HttpRequest().request(vkAPI.VkServerRequest().createConnectionRequest())
+  def getSecret(file: String): String = {
+    val secretSource = scala.io.Source.fromFile(f"src/main/scala/vkAPI/$file")
+    try secretSource.mkString finally secretSource.close()
+  }
 
-  val responseObject = vkAPI.VkServerRequest().deserializeConnectionResponse(response)
-  var ts = responseObject.ts
+  val vkToken = getSecret("vkToken.txt")
+  val vkID = getSecret("publicID.txt")
 
-  while (true) {
-    val latestUpdate = vkAPI.VkServerRequest().deserializeUpdateResponse(
-      HttpRequest().request(vkAPI.VkHTTPHandler().createServerRequest(
+  val vkServerRequest = vkAPI.VkServerRequest(vkToken, vkID)
+  val response = HttpRequest().request(vkServerRequest.createConnectionRequestUrl())
+
+  val responseObject = vkServerRequest.deserializeConnectionResponse(response)
+
+  @tailrec
+  def eventLoop(ts: String): Unit = {
+    val latestUpdate = vkServerRequest.deserializeUpdateResponse(
+      HttpRequest().request(vkAPI.VkHTTPHandler().createServerRequestUrl(
         responseObject.server,
         responseObject.key,
         ts)))
-    ts = latestUpdate.ts
 
-    for (i <- latestUpdate.updates) {
-      println(i.`object`.message.text)
-      i.`type` match {
-        case "message_new" =>
-          val url = vkAPI.vkMessageRequest().createRequest(i)
-          HttpRequest().request(url)
-          Thread.sleep(1000)
+    @tailrec
+    def lookOverUpdates(updates: List[NestedUpdateResponse]): Unit = {
+      updates match {
+        case update :: tail =>
+          println(update.`object`.message.text)
+          update.`type` match {
+            case "message_new" =>
+              val url = vkAPI.VkMessageRequest(vkToken, vkID).createRequest(update)
+              HttpRequest().request(url)
+              Thread.sleep(1000)
+          }
+          lookOverUpdates(tail)
+        case _ =>
       }
     }
+    lookOverUpdates(latestUpdate.updates)
     Thread.sleep(1000)
+    eventLoop(latestUpdate.ts)
   }
+  eventLoop(responseObject.ts)
 }
