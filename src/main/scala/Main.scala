@@ -1,8 +1,10 @@
 import vkAPI.*
 import botLogic.*
+import httpHelpers.HttpHelper
 
 import java.net.URLEncoder
 import scala.annotation.tailrec
+import upickle.default.read
 
 
 object Main extends App {
@@ -14,15 +16,15 @@ object Main extends App {
   val vkToken = getSecret("vkToken.txt")
   val vkID = getSecret("publicID.txt")
 
-  val vkServerRequest = vkAPI.VkServerRequest(vkToken, vkID)
-  val response = HttpRequest().request(vkServerRequest.createConnectionRequestUrl())
+  val vkRequestUrlBuilder = vkAPI.VkRequestUrlBuilder(vkToken, vkID)
+  val response = HttpHelper.sendRequest(vkRequestUrlBuilder.createConnectionRequestUrl())
 
-  val responseObject = vkServerRequest.deserializeConnectionResponse(response)
+  val responseObject = read[ConnectionResponse](response).response
 
   @tailrec
   def eventLoop(ts: String): Unit = {
-    val latestUpdate = vkServerRequest.deserializeUpdateResponse(
-      HttpRequest().request(vkAPI.VkHTTPHandler().createServerRequestUrl(
+    val latestUpdate = read[UpdateResponse](
+      HttpHelper.sendRequest(VkRequestUrlBuilder.createLongPollRequestUrl(
         responseObject.server,
         responseObject.key,
         ts)))
@@ -34,14 +36,15 @@ object Main extends App {
           println(update.`object`.message.text)
           update.`type` match {
             case "message_new" =>
-              val url = vkAPI.VkMessageRequest(vkToken, vkID).createRequest(update)
-              HttpRequest().request(url)
+              val url = vkRequestUrlBuilder.createRequest(update)
+              HttpHelper.sendRequest(url)
               Thread.sleep(1000)
           }
           lookOverUpdates(tail)
         case _ =>
       }
     }
+
     lookOverUpdates(latestUpdate.updates)
     Thread.sleep(1000)
     eventLoop(latestUpdate.ts)
