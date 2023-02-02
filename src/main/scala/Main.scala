@@ -4,11 +4,11 @@ import httpHelpers.HttpHelper
 
 import java.net.URLEncoder
 import scala.annotation.tailrec
-import upickle.default.read
+import upickle.default.{read, write}
 
 
 object Main extends App {
-  def getSecret(file: String): String = {
+    def getSecret(file: String): String = {
     val secretSource = scala.io.Source.fromFile(f"src/main/scala/vkAPI/$file")
     try secretSource.mkString finally secretSource.close()
   }
@@ -36,9 +36,10 @@ object Main extends App {
           println(update.`object`.message.text)
           update.`type` match {
             case "message_new" =>
-              val url = vkRequestUrlBuilder.createRequest(update)
+              val url = vkRequestUrlBuilder.createMessage(update)
               HttpHelper.sendRequest(url)
-              Thread.sleep(1000)
+              Thread.sleep(250)
+            case _ =>
           }
           lookOverUpdates(tail)
         case _ =>
