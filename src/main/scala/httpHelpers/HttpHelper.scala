@@ -3,10 +3,11 @@ package httpHelpers
 import java.io.{BufferedReader, IOException, InputStreamReader}
 import java.net.{HttpURLConnection, URL}
 import java.util
+import java.net.URLEncoder
 
 object HttpHelper {
-  def buildUrl(basePath: String, params: Map[String, String]) : String = {
-    val stringParams = params.map { case (key, value) => key + "=" + value }.mkString(sep = "&")
+  def buildUrl(basePath: String, params: Map[String, Option[String]]) : String = {
+    val stringParams = params.map { case (key, value) => key + "=" + URLEncoder.encode(value.getOrElse(""), "UTF-8") }.mkString(sep = "&")
     f"$basePath?$stringParams"
   }
 

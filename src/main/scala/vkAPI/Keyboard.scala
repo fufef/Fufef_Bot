@@ -1,6 +1,6 @@
 package vkAPI
 
-case class Keyboard(oneTime: Boolean, inline: Boolean, buttons: List[Button])
+case class Keyboard(one_time: Boolean, inline: Boolean, buttons: List[List[Button]])
 
 case class Button(color: String, action: TextAction)
 
