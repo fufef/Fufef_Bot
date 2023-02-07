@@ -2,7 +2,7 @@ package botLogic
 
 import vkAPI.{Keyboard, TextAction, Button}
 
-class MessageHandler {
+object MessageHandler {
   def createAnswer(message: String): Message = {
     message match {
       case "заказать коммишку" => Message("ну заказывайте")
@@ -15,7 +15,7 @@ class MessageHandler {
       case "хочу анек" => Message("купил фуршет шляпу а она ему - я цилиндр")
       case "отозвать фурша" => Message("фурш отозван. пусть спит дальше")
       case "другие действия" => Message("что вы хотите сделать??",
-        Some(Keyboard(false, false, List(
+        Some(Keyboard(one_time = false, inline = false, List(
           List(
             Button("secondary", TextAction(label = "позвать фурша", `type` = "text")),
             Button("secondary", TextAction(label = "ваш паблик лучший", `type` = "text")),
@@ -37,7 +37,7 @@ class MessageHandler {
             Button("secondary", TextAction(label = "отозвать фурша", `type` = "text"))
           )))))
       case "главное меню" | "меню" | "начать" | "старт" | "назад" => Message("что вас интересует???",
-        Some(Keyboard(false, false, List(
+        Some(Keyboard(one_time = false, inline = false, List(
           List(
             Button("primary", TextAction(label = "заказать коммишку", `type` = "text"))
           ),

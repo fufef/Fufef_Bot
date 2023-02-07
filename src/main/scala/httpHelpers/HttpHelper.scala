@@ -2,7 +2,6 @@ package httpHelpers
 
 import java.io.{BufferedReader, IOException, InputStreamReader}
 import java.net.{HttpURLConnection, URL}
-import java.util
 import java.net.URLEncoder
 
 object HttpHelper {

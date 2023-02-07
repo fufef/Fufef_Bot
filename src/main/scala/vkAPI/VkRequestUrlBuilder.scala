@@ -1,16 +1,15 @@
 package vkAPI
 
-import java.net.URLEncoder
 import httpHelpers.HttpHelper
 
-class VkRequestUrlBuilder(token: String, id: String) {
+case class VkRequestUrlBuilder(token: String, id: String) {
   def createConnectionRequestUrl(): String = {
     createRequestUrl("groups.getLongPollServer",
       Map("access_token" -> Some(token), "group_id" -> Some(id), "v" -> Some(Constants.vkVersion)))
   }
 
   def createMessage(updateResponse: NestedUpdateResponse): String = {
-    val message = botLogic.MessageHandler().createAnswer(updateResponse.`object`.message.text.toLowerCase)
+    val message = botLogic.MessageHandler.createAnswer(updateResponse.`object`.message.text.toLowerCase)
 
     createRequestUrl("messages.send",
       Map(

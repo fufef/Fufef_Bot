@@ -1,17 +1,32 @@
-import vkAPI.*
-import botLogic.*
+import vkAPI.{ConnectionResponse, NestedUpdateResponse, UpdateResponse, VkRequestUrlBuilder}
 import httpHelpers.HttpHelper
 
-import java.net.URLEncoder
 import scala.annotation.tailrec
-import upickle.default.{read, write}
+import upickle.default.read
 
 
 object Main extends App {
-    def getSecret(file: String): String = {
+  def getSecret(file: String): String = {
     val secretSource = scala.io.Source.fromFile(f"src/main/scala/vkAPI/$file")
     try secretSource.mkString finally secretSource.close()
   }
+
+  val db = slick.jdbc.JdbcBackend.Database.forConfig("postgres")
+  val session = db.createSession()
+  val stm = session.conn.createStatement()
+
+  val res = stm.executeQuery("""
+      select
+         id, name
+      from
+         test
+      limit 10""")
+  while (res.next()) {
+    print(res.getString(2))
+  }
+
+  stm.close()
+  session.close()
 
   val vkToken = getSecret("vkToken.txt")
   val vkID = getSecret("publicID.txt")
