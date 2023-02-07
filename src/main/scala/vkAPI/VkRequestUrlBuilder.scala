@@ -10,7 +10,7 @@ class VkRequestUrlBuilder(token: String, id: String) {
   }
 
   def createMessage(updateResponse: NestedUpdateResponse): String = {
-    val message = botLogic.MessageHandler().createAnswer(updateResponse.`object`.message.text.toLowerCase)
+    val message = botLogic.MessageHandler.createAnswer(updateResponse.`object`.message.text.toLowerCase)
 
     createRequestUrl("messages.send",
       Map(

@@ -2,7 +2,7 @@ package botLogic
 
 import vkAPI.{Keyboard, TextAction, Button}
 
-class MessageHandler {
+object MessageHandler {
   def createAnswer(message: String): Message = {
     message match {
       case "заказать коммишку" => Message("ну заказывайте")
@@ -14,46 +14,47 @@ class MessageHandler {
       case "задать вопрос" => Message("фурш вас слушает")
       case "хочу анек" => Message("купил фуршет шляпу а она ему - я цилиндр")
       case "отозвать фурша" => Message("фурш отозван. пусть спит дальше")
-      case "другие действия" => Message("что вы хотите сделать??",
-        Some(Keyboard(false, false, List(
-          List(
-            Button("secondary", TextAction(label = "позвать фурша", `type` = "text")),
-            Button("secondary", TextAction(label = "ваш паблик лучший", `type` = "text")),
-          ),
-          List(
-            Button("secondary", TextAction(label = "оставить гневный отзыв", `type` = "text")),
-            Button("secondary", TextAction(label = "оставить радостный отзыв", `type` = "text"))
-          ),
-          List(
-            Button("secondary", TextAction(label = "меня оставили на линии. что делать?", `type` = "text"))
-          ),
-          List(
-            Button("primary", TextAction(label = "назад", `type` = "text"))
-          )
-        ))))
-      case "позвать фурша" => Message("фурш спит. ожидайте................",
-        Some(Keyboard(one_time = true, inline = false, List(
-          List(
-            Button("secondary", TextAction(label = "отозвать фурша", `type` = "text"))
-          )))))
-      case "главное меню" | "меню" | "начать" | "старт" | "назад" => Message("что вас интересует???",
-        Some(Keyboard(false, false, List(
-          List(
-            Button("primary", TextAction(label = "заказать коммишку", `type` = "text"))
-          ),
-          List(
-            Button("secondary", TextAction(label = "посмотреть прайс", `type` = "text"))
-          ),
-          List(
-            Button("secondary", TextAction(label = "задать вопрос", `type` = "text"))
-          ),
-          List(
-            Button("secondary", TextAction(label = "хочу анек", `type` = "text"))
-          ),
-          List(
-            Button("secondary", TextAction(label = "другие действия", `type` = "text"))
-          )))))
+      case "другие действия" => Message("что вы хотите сделать??", Some(otherActionsKeyboard))
+      case "позвать фурша" => Message("фурш спит. ожидайте................", Some(callAdminKeyboard))
+      case "главное меню" | "меню" | "начать" | "старт" | "назад" => Message("что вас интересует???", Some(menuKeyboard))
       case _ => Message("фурш вас не понимать")
     }
   }
+
+  final val otherActionsKeyboard: Keyboard = Keyboard(false, false, List(
+    List(
+      Button("secondary", TextAction(label = "позвать фурша", `type` = "text")),
+      Button("secondary", TextAction(label = "ваш паблик лучший", `type` = "text")),
+    ),
+    List(
+      Button("secondary", TextAction(label = "оставить гневный отзыв", `type` = "text")),
+      Button("secondary", TextAction(label = "оставить радостный отзыв", `type` = "text"))
+    ),
+    List(
+      Button("secondary", TextAction(label = "меня оставили на линии. что делать?", `type` = "text"))
+    ),
+    List(
+      Button("primary", TextAction(label = "назад", `type` = "text"))
+    )
+  ))
+  final val callAdminKeyboard: Keyboard = Keyboard(one_time = true, inline = false, List(
+    List(
+      Button("secondary", TextAction(label = "отозвать фурша", `type` = "text"))
+    )))
+  final val menuKeyboard: Keyboard = Keyboard(false, false, List(
+    List(
+      Button("primary", TextAction(label = "заказать коммишку", `type` = "text"))
+    ),
+    List(
+      Button("secondary", TextAction(label = "посмотреть прайс", `type` = "text"))
+    ),
+    List(
+      Button("secondary", TextAction(label = "задать вопрос", `type` = "text"))
+    ),
+    List(
+      Button("secondary", TextAction(label = "хочу анек", `type` = "text"))
+    ),
+    List(
+      Button("secondary", TextAction(label = "другие действия", `type` = "text"))
+    )))
 }

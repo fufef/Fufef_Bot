@@ -8,7 +8,7 @@ import upickle.default.{read, write}
 
 
 object Main extends App {
-    def getSecret(file: String): String = {
+  def getSecret(file: String): String = {
     val secretSource = scala.io.Source.fromFile(f"src/main/scala/vkAPI/$file")
     try secretSource.mkString finally secretSource.close()
   }
@@ -50,5 +50,6 @@ object Main extends App {
     Thread.sleep(1000)
     eventLoop(latestUpdate.ts)
   }
+
   eventLoop(responseObject.ts)
 }
